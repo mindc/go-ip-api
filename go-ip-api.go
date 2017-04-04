@@ -2,6 +2,7 @@ package main
 
 import (
         "fmt"
+	"flag"
         "github.com/julienschmidt/httprouter"
         "log"
         "net/http"
@@ -91,8 +92,16 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
 
 
 func main() {
+	var (
+		port	= flag.String( "port", "8080", "The server port" )
+		htdoc	= flag.String( "htdoc", "index.html", "Default page location" )
+	)
+
+	flag.Parse()
+
+
 	var err error
-        index, err = ioutil.ReadFile( "/root/gocode/src/github.com/mindc/go-ip-api/README.html" )
+        index, err = ioutil.ReadFile( *htdoc )
 	if err != nil {
 	    log.Panic( err.Error() )
         }
@@ -111,6 +120,6 @@ func main() {
 
 	router.POST( "/jsonrpc", Jsonrpc )
 
-        log.Fatal( http.ListenAndServe( ":80", router ) )
+        log.Fatal( http.ListenAndServe( ":"+ *port, router ) )
 }
 
