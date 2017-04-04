@@ -6,37 +6,39 @@ Simple API to get your remote ip address.
 
 Running...
 
-## (http://ip.mindc.net/plain)
+## API
 
-method: GET,POST
+### [http://ip.mindc.net/plain](http://ip.mindc.net/plain)
+
+method: GET,POST  
 response (text/plain):
 
     8.8.8.8
 
 
-## (http://ip.mindc.net/json)
+### [http://ip.mindc.net/json](http://ip.mindc.net/json)
 
-method: GET,POST
+method: GET,POST  
 response (application/json):
 
     {"ip":"8.8.8.8"}
 
-## (http://ip.mindc.net/jsonp?callback=YOUR_CALLBACK)
+### [http://ip.mindc.net/jsonp?callback=YOUR_CALLBACK](http://ip.mindc.net/jsonp?callback=YOUR_CALLBACK)
 
-method: GET
+method: GET  
 response (text/javascript):
 
     YOUR_CALLBACK("8.8.8.8");
 
-## http://ip.mindc.net/jsonrpc
+### http://ip.mindc.net/jsonrpc
 
-method: POST
+method: POST  
 response (application/json):
 
     {"jsonrpc":"2.0","id":"xFrB","result":"8.8.8.8"}
 
-_require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request with any value as `method`_
+_* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request with any value as `method`_
 
 ## Author
 
-(https://github.com/mindc)
+[https://github.com/mindc](https://github.com/mindc)
