@@ -92,7 +92,7 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
 
 func main() {
 	var err error
-        index, err = ioutil.ReadFile( "/root/gocode/index.html" )
+        index, err = ioutil.ReadFile( "/root/gocode/src/github.com/mindc/go-ip-api/README.html" )
 	if err != nil {
 	    log.Panic( err.Error() )
         }
