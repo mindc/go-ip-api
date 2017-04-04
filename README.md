@@ -1,7 +1,7 @@
 # Simple IP-API
 
 Simple API to get your remote ip address.  
-Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router
+Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router.
 
 ## Status
 
@@ -38,8 +38,10 @@ response (application/json):
 
     {"jsonrpc":"2.0","id":"xFrB","result":"8.8.8.8"}
 
-_* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request with any value as `method`_
+_* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request with any string value as `method`_
 
-## Author
+## Source code
 
-[https://github.com/mindc](https://github.com/mindc)
+[https://github.com/mindc/go-ip-api](https://github.com/mindc/go-ip-api)
+
+2017
