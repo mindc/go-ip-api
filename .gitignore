@@ -22,3 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+README.html
+md2html.pl
+go-ip-api
