@@ -28,7 +28,7 @@ func Plain( w http.ResponseWriter, r *http.Request, _ httprouter.Params ){
 
 func Json( w http.ResponseWriter, r * http.Request, _ httprouter.Params ){
         w.Header().Set( "Content-Type", "application/json; charset=utf-8" )
-        fmt.Fprintf( w, "{\"ip\":\"%s\"}", GetIP( r ) )
+        fmt.Fprintf( w, `{"ip":"%s"}`, GetIP( r ) )
 }
 
 func Jsonp( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
@@ -44,13 +44,13 @@ func Jsonp( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
 	    callback = val[ len(val)-1 ]
 	}
 
-        fmt.Fprintf( w, "%s(\"%s\");", callback, GetIP( r ) )
+        fmt.Fprintf( w, `%s("%s");`, callback, GetIP( r ) )
 }
 
 type JSONRPC struct {
-    ID	 	json.RawMessage	`json:"id,omitempty"`
-    Jsonrpc 	*string 		`json:"jsonrpc,omitempty"`
-    Method 	*string 		`json:"method,omitempty"`
+	ID	json.RawMessage	`json:"id,omitempty"`
+	Jsonrpc	*string 	`json:"jsonrpc,omitempty"`
+	Method 	*string 	`json:"method,omitempty"`
 }
 
 func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
@@ -70,7 +70,6 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
 	    fmt.Fprintf( w, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"%s"}}`, err.Error() )
 	    return
 	}
-
 
 	if j.ID == nil { //notify
 	    fmt.Fprint( w, "" )
@@ -105,9 +104,6 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
 
 }
 
-
-
-
 func main() {
 	var (
 		port	= flag.String( "port", "8080", "The server port" )
@@ -115,7 +111,6 @@ func main() {
 	)
 
 	flag.Parse()
-
 
 	var err error
         index, err = ioutil.ReadFile( *htdoc )
@@ -139,4 +134,3 @@ func main() {
 
         log.Fatal( http.ListenAndServe( ":"+ *port, router ) )
 }
-
