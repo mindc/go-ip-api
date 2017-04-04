@@ -1,6 +1,7 @@
-# go-ip-api
+# Simple IP-API
 
-Simple API to get your remote ip address.
+Simple API to get your remote ip address.  
+Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router
 
 ## Status
 
