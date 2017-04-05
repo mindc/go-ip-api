@@ -26,7 +26,6 @@ _*.go
 *.prof
 
 
-Makefile
 README.html
 md2html.pl
 go-ip-api
