@@ -2,135 +2,82 @@ package main
 
 import (
         "fmt"
-	"flag"
         "github.com/julienschmidt/httprouter"
+	"github.com/mindc/go-ip-api/api"
+	"github.com/caarlos0/env"
         "log"
         "net/http"
-        "net"
-	"encoding/json"
 	"io/ioutil"
 )
 
-var index []byte
+var (
+    Version string
+    BUILD string
+)
 
-func GetIP ( r * http.Request ) ( string ) {
-        ipaddr, _, _ := net.SplitHostPort( r.RemoteAddr )
-	return ipaddr
-}
+var htdoc string
 
 func Start( w http.ResponseWriter, r *http.Request, _ httprouter.Params ){
-	fmt.Fprint( w, string( index ) )
+	fmt.Fprint( w, htdoc )
 }
 
-func Plain( w http.ResponseWriter, r *http.Request, _ httprouter.Params ){
-        fmt.Fprint( w, GetIP( r ) )
+type Config struct {
+    Port	string	`env:"PORT" envDefault:"8080"`
+    PortSSL	string	`env:"PORT_SSL"`
+    Gzip	bool	`env:"GZIP" envDefault:"false"`
+    HtDoc	string	`env:"HTDOC"`
+    SSLCert	string	`env:"SSL_CERT"`
+    SSLKey	string	`env:"SSL_KEY"`
 }
 
-func Json( w http.ResponseWriter, r * http.Request, _ httprouter.Params ){
-        w.Header().Set( "Content-Type", "application/json; charset=utf-8" )
-        fmt.Fprintf( w, `{"ip":"%s"}`, GetIP( r ) )
-}
-
-func Jsonp( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
-        w.Header().Set( "Content-Type", "text/javascript; charset=utf-8" )
-
-	err := r.ParseForm()
-	if err != nil {
-	}
-
-	callback := "callback"
-
-	if val, ok := r.Form["callback"]; ok && len( val[ len(val)-1 ] ) > 0 {
-	    callback = val[ len(val)-1 ]
-	}
-
-        fmt.Fprintf( w, `%s("%s");`, callback, GetIP( r ) )
-}
-
-type JSONRPC struct {
-	ID	json.RawMessage	`json:"id,omitempty"`
-	Jsonrpc	*string 	`json:"jsonrpc,omitempty"`
-	Method 	*string 	`json:"method,omitempty"`
-}
-
-func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
-        w.Header().Set( "Content-Type", "application/json; charset=utf-8" )
-	w.Header().Set( "Access-Control-Allow-Origin", r.Header.Get( "Origin" ) )
-	w.Header().Set( "Access-Control-Allow-Credentials", "true" )
-
-	if r.Body == nil {
-	    fmt.Fprintf( w, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}` )
-	    return
-	}
-
-	var j JSONRPC
-	err := json.NewDecoder( r.Body ).Decode( &j )
-
-	if err != nil {
-	    fmt.Fprintf( w, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"%s"}}`, err.Error() )
-	    return
-	}
-
-	if j.ID == nil { //notify
-	    fmt.Fprint( w, "" )
-	    return
-	}
-
-	var s string
-	if err = json.Unmarshal( j.ID, &s ); err == nil {
-	    if len ( s ) > 0 {
-		s = `"` + s + `"`
-	    } else {
-		s = `null`
-	    }
-
-    	    if j.Jsonrpc == nil || *j.Jsonrpc != "2.0" || j.Method == nil {
-		fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%s,"error":{"code":-32600,"message":"Invalid Request"}}`, s )
-	    } else {
-		fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%s,"result":"%s"}`, s, GetIP( r ) )
-	    }
-	    return
-	}
-
-	var n uint64
-	if err = json.Unmarshal( j.ID, &n ); err == nil {
-    	    if j.Jsonrpc == nil || *j.Jsonrpc != "2.0" || j.Method == nil {
-		fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%d,"error":{"code":-32600,"message":"Invalid Request"}}`, n )
-	    } else {
-		fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%d,"result":"%s"}`, n, GetIP( r ) )
-	    }
-	    return
-	}
-
-}
 
 func main() {
-	var (
-		port	= flag.String( "port", "8080", "The server port" )
-		htdoc	= flag.String( "htdoc", "index.html", "Default page location" )
-	)
+    fmt.Printf( "Version: %s\n", Version )
+    fmt.Printf( "Build: %s\n", BUILD )
 
-	flag.Parse()
-
-	var err error
-        index, err = ioutil.ReadFile( *htdoc )
+    //read confgiuration from ENV
+	cfg := Config{}
+	err := env.Parse(&cfg)
 	if err != nil {
-	    log.Panic( err.Error() )
-        }
+	    fmt.Printf("%#v\n", err)
+	}
+	fmt.Printf("%#v\n", cfg)
 
+    //read default htdoc
+	if cfg.HtDoc != "" {
+            fh, err := ioutil.ReadFile( cfg.HtDoc )
+	    if err != nil {
+		log.Fatal( err )
+	    }
+	    htdoc = string( fh )
+	} else {
+	    htdoc = "It works!"
+	}
+
+    //configure router
         router := httprouter.New()
 
         router.GET( "/", Start )
 
-        router.GET( "/plain", Plain )
-        router.POST( "/plain", Plain )
+        router.GET( "/plain", api.Plain )
+        router.POST( "/plain", api.Plain )
 
-        router.GET( "/json", Json )
-        router.POST( "/json", Json )
+        router.GET( "/json", api.Json )
+        router.POST( "/json", api.Json )
 
-        router.GET( "/jsonp", Jsonp )
+        router.GET( "/jsonp", api.Jsonp )
 
-	router.POST( "/jsonrpc", Jsonrpc )
+	router.POST( "/jsonrpc", api.Jsonrpc )
 
-        log.Fatal( http.ListenAndServe( ":"+ *port, router ) )
+    //main loops
+	if cfg.PortSSL != "" {
+    	    go func() {
+		log.Fatal( http.ListenAndServeTLS( ":" + cfg.PortSSL, cfg.SSLCert, cfg.SSLKey, router ) )
+	    }()
+	}
+
+        log.Fatal( http.ListenAndServe( ":" + cfg.Port, router ) )
+
+
 }
+

@@ -9,7 +9,7 @@ Running...
 
 ## API
 
-### [http://ip.mindc.net/plain](http://ip.mindc.net/plain)
+### [https://ip.mindc.net/plain](https://ip.mindc.net/plain)
 
 method: GET,POST  
 response (text/plain):
@@ -17,21 +17,21 @@ response (text/plain):
     8.8.8.8
 
 
-### [http://ip.mindc.net/json](http://ip.mindc.net/json)
+### [https://ip.mindc.net/json](https://ip.mindc.net/json)
 
 method: GET,POST  
 response (application/json):
 
     {"ip":"8.8.8.8"}
 
-### [http://ip.mindc.net/jsonp?callback=YOUR_CALLBACK](http://ip.mindc.net/jsonp?callback=YOUR_CALLBACK)
+### [https://ip.mindc.net/jsonp?callback=YOUR_CALLBACK](https://ip.mindc.net/jsonp?callback=YOUR_CALLBACK)
 
 method: GET  
 response (text/javascript):
 
     YOUR_CALLBACK("8.8.8.8");
 
-### http://ip.mindc.net/jsonrpc
+### https://ip.mindc.net/jsonrpc
 
 method: POST  
 response (application/json):

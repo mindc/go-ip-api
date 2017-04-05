@@ -19,12 +19,14 @@ _cgo_export.*
 
 _testmain.go
 
+_*.go
+
 *.exe
 *.test
 *.prof
 
+
+Makefile
 README.html
 md2html.pl
 go-ip-api
-dev.go
-dev
