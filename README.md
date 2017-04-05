@@ -1,7 +1,8 @@
 # Simple IP-API
 
 Simple API to get your remote ip address.  
-Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router.
+Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router.  
+Using [https://github.com/caarlos0/env]("github.com/caarlos0/env") as ENV parser.
 
 ## Status
 
