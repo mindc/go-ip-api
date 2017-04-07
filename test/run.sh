@@ -1,55 +1,51 @@
 #!/bin/bash
 
+URL=${URL:-http://ip.mindc.net}
+URL=${1:-$URL}
 
-PORT=${PORT:-80}
-
-echo default page
-curl -f http://ip.mindc.net:$PORT
-echo
-
-echo 404
-curl -f http://ip.mindc.net:$PORT/404
+echo -e "\e[1mdefault page\e[m"
+curl -if ${URL}
 echo
 
-echo plain GET
-curl -f http://ip.mindc.net:$PORT/plain
-echo
-echo plain POST
-curl -f http://ip.mindc.net:$PORT/plain
+echo -e "\e[1mnot found\e[m"
+curl -if ${URL}/404
 echo
 
-echo json GET
-curl -f http://ip.mindc.net:$PORT/json
+echo -e "\e[1mPlain GET\e[m"
+curl -if ${URL}/plain
 echo
-echo json POST
-curl -f --data "" http://ip.mindc.net:$PORT/json
-echo
-
-echo jsonp GET
-curl -f http://ip.mindc.net:$PORT/jsonp
-echo
-curl -f http://ip.mindc.net:$PORT/jsonp?call
-echo
-curl -f http://ip.mindc.net:$PORT/jsonp?callback=
-echo
-curl -f http://ip.mindc.net:$PORT/jsonp?callback=I
+echo -e "\e[1mPlain POST\e[m"
+curl -if ${URL}/plain
 echo
 
-echo jsonp POST
-curl -f --data "" http://ip.mindc.net:$PORT/jsonp
+echo -e "\e[1mJSON GET\e[m"
+curl -if ${URL}/json
+echo
+echo -e "\e[1mJSON POST\e[m"
+curl -if --data "" ${URL}/json
+echo
+
+echo -e "\e[1mJSONP GET\e[m"
+set -x
+curl -if ${URL}/jsonp
+curl -if ${URL}/jsonp?call
+curl -if ${URL}/jsonp?callback=
+curl -if ${URL}/jsonp?callback=I
+set +x
+
+echo -e "\e[1mJSONP POST\e[m"
+curl -if --data "" ${URL}/jsonp
 echo
 
 
-echo jsonrpc POST
-curl -f --data '{"jsonrpc":"2.0","id":"1","method":"getIP"}' http://ip.mindc.net:$PORT/jsonrpc
-echo
-curl -f --data '{"jsonrpc":"2.0","id":1,"method":"getIP"}' http://ip.mindc.net:$PORT/jsonrpc
-echo
-curl -f --data '{"jsonrpc":"2.0","method":"getIP"}' http://ip.mindc.net:$PORT/jsonrpc
-echo
-
-
-echo
+echo -e "\e[1mJSONRPC POST\e[m"
+echo -e "\e[1mID as string\e[m"
+curl -if --data '{"jsonrpc":"2.0","id":"1","method":"getIP"}' ${URL}/jsonrpc
+echo;echo -e "\e[1mID as number\e[m"
+curl -if --data '{"jsonrpc":"2.0","id":1,"method":"getIP"}' ${URL}/jsonrpc
+echo;echo -e "\e[1mID is null\e[m"
+curl -if --data '{"jsonrpc":"2.0","method":"getIP"}' ${URL}/jsonrpc
+echo;echo
 
 
 

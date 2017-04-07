@@ -6,7 +6,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func Json( ctx * fasthttp.RequestCtx ){
-        ctx.SetContentType( "application/json; charset=utf-8" )
-        fmt.Fprintf( ctx, `{"ip":"%s"}`, GetIP( ctx ) )
+func JSON(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("application/json; charset=utf-8")
+	fmt.Fprintf(ctx, `{"ip":"%s"}`, GetIP(ctx))
 }

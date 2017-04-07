@@ -6,19 +6,15 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func Jsonp( ctx * fasthttp.RequestCtx ){
-        ctx.SetContentType( "text/javascript; charset=utf-8" )
+func JSONP(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("text/javascript; charset=utf-8")
 
-        callback := "callback"
-        val := ctx.FormValue( "callback" )
+	c := "callback"
+	v := ctx.FormValue("callback")
 
-	if len( val ) > 0 {
-	    callback = string( val )
+	if len(v) > 0 {
+		c = string(v)
 	}
-	
-	
 
-
-        fmt.Fprintf( ctx, `%s("%s");`, callback, GetIP( ctx ) )
+	fmt.Fprintf(ctx, `%s("%s");`, c, GetIP(ctx))
 }
-
