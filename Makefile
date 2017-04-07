@@ -1,4 +1,4 @@
-BINARY=go-ip-api
+BINARY=fasthttp
 
 VERSION=1.1.0
 BUILD=`git rev-parse HEAD`

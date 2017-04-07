@@ -1,10 +1,10 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"crypto/tls"
 	"net"
 
 	"github.com/buaazp/fasthttprouter"
@@ -14,8 +14,8 @@ import (
 )
 
 var (
-	Version string
-	BUILD   string
+	Version string //version
+	BUILD   string //build
 )
 
 var htdoc string
@@ -37,7 +37,7 @@ func main() {
 	fmt.Printf("Version: %s\n", Version)
 	fmt.Printf("Build: %s\n", BUILD)
 
-	//read confgiuration from ENV
+	//read configuration from ENV
 	cfg := Config{}
 	err := env.Parse(&cfg)
 	if err != nil {
@@ -73,27 +73,30 @@ func main() {
 
 	//main loops
 	if cfg.PortSSL != "" {
-	    tlsConfig := &tls.Config{}
-	    tlsConfig.Certificates = make([]tls.Certificate, 1)
-	    tlsConfig.Certificates[0], err = tls.LoadX509KeyPair( cfg.SSLCert, cfg.SSLKey )
-	    if err != nil {
-    		log.Fatal(err)
-	    }
+		tlsConfig := &tls.Config{}
+		tlsConfig.Certificates = make([]tls.Certificate, 1)
+		tlsConfig.Certificates[0], err = tls.LoadX509KeyPair(cfg.SSLCert, cfg.SSLKey)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	    tlsConfig.BuildNameToCertificate()
-	    listener, err := tls.Listen("tcp", ":" + cfg.PortSSL, tlsConfig)
+		tlsConfig.BuildNameToCertificate()
+		listener, err := tls.Listen("tcp", ":"+cfg.PortSSL, tlsConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	    if err != nil {
-    		log.Fatal(err)
-	    }
-
-	    go func() {
-	        log.Fatal( fasthttp.Serve( listener, router.Handler ) )
-	    }()			
+		go func() {
+			log.Fatal(fasthttp.Serve(listener, router.Handler))
+		}()
 
 	}
 
-	listener, err := net.Listen( "tcp", ":" + cfg.Port )
-	log.Fatal(fasthttp.Serve( listener, router.Handler))
+	listener, err := net.Listen("tcp", ":"+cfg.Port)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Fatal(fasthttp.Serve(listener, router.Handler))
 
 }

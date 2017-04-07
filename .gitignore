@@ -29,3 +29,4 @@ _*.go
 README.html
 md2html.pl
 go-ip-api
+fasthttp

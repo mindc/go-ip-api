@@ -45,6 +45,6 @@ _* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request wi
 
 Using [https://github.com/valyala/fasthttp](https://github.com/valyala/fasthttp) as net/http replacement.  
 Using [https://github.com/buaazp/fasthttprouter](https://github.com/buaazp/fasthttprouter) as HTTP request router.  
-Using [https://github.com/caarlos0/env]("github.com/caarlos0/env") as ENV parser.
+Using [https://github.com/caarlos0/env](https://github.com/caarlos0/env) as ENV parser.
 
 2017
