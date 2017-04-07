@@ -19,6 +19,7 @@ var (
 var htdoc string
 
 func Start( ctx * fasthttp.RequestCtx ){
+	ctx.SetContentType( "text/html" )
 	fmt.Fprint( ctx, htdoc )
 }
 
