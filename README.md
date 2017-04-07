@@ -1,8 +1,6 @@
 # Simple IP-API
 
-Simple API to get your remote ip address.  
-Using [https://github.com/julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) as HTTP request router.  
-Using [https://github.com/caarlos0/env]("github.com/caarlos0/env") as ENV parser.
+Simple API to get your remote ip address.
 
 ## Status
 
@@ -44,5 +42,10 @@ _* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request wi
 ## Source code
 
 [https://github.com/mindc/go-ip-api](https://github.com/mindc/go-ip-api)
+
+Using [https://github.com/valyala/fasthttp](https://github.com/valyala/fasthttp) as net/http replacement.  
+Using [https://github.com/buaazp/fasthttprouter](https://github.com/buaazp/fasthttprouter) as HTTP request router. 
+Using [https://github.com/caarlos0/env]("github.com/caarlos0/env") as ENV parser.
+
 
 2017

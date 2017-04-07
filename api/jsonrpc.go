@@ -2,9 +2,10 @@ package api
 
 import (
 	"fmt"
-	"net/http"
-	"github.com/julienschmidt/httprouter"
 	"encoding/json"
+	"strings"
+
+	"github.com/valyala/fasthttp"
 )
 
 type JSONRPC struct {
@@ -13,26 +14,26 @@ type JSONRPC struct {
         Method  *string         `json:"method,omitempty"`
 }
 
-func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
-        w.Header().Set( "Content-Type", "application/json; charset=utf-8" )
-        w.Header().Set( "Access-Control-Allow-Origin", r.Header.Get( "Origin" ) )
-        w.Header().Set( "Access-Control-Allow-Credentials", "true" )
+func Jsonrpc( ctx * fasthttp.RequestCtx ){
+        ctx.Response.Header.Set( "Content-Type", "application/json; charset=utf-8" )
+        ctx.Response.Header.Set( "Access-Control-Allow-Origin", string( ctx.Request.Header.Peek( "Origin" ) ) )
+        ctx.Response.Header.Set( "Access-Control-Allow-Credentials", "true" )
 
-        if r.Body == nil {
-            fmt.Fprintf( w, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}` )
+        if ctx.PostBody() == nil {
+            fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}` )
             return
         }
 
         var j JSONRPC
-        err := json.NewDecoder( r.Body ).Decode( &j )
+        err := json.NewDecoder( strings.NewReader( string( ctx.PostBody() ) ) ).Decode( &j )
 
         if err != nil {
-            fmt.Fprintf( w, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"%s"}}`, err.Error() )
+            fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error","data":"%s"}}`, err.Error() )
             return
         }
 
         if j.ID == nil { //notify
-            fmt.Fprint( w, "" )
+            fmt.Fprint( ctx, "" )
             return
         }
 
@@ -45,9 +46,9 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
             }
 
             if j.Jsonrpc == nil || *j.Jsonrpc != "2.0" || j.Method == nil {
-                fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%s,"error":{"code":-32600,"message":"Invalid Request"}}`, s )
+                fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":%s,"error":{"code":-32600,"message":"Invalid Request"}}`, s )
             } else {
-                fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%s,"result":"%s"}`, s, GetIP( r ) )
+                fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":%s,"result":"%s"}`, s, GetIP( ctx ) )
             }
             return
         }
@@ -55,9 +56,9 @@ func Jsonrpc( w http.ResponseWriter, r * http.Request, p httprouter.Params ){
         var n uint64
         if err = json.Unmarshal( j.ID, &n ); err == nil {
             if j.Jsonrpc == nil || *j.Jsonrpc != "2.0" || j.Method == nil {
-                fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%d,"error":{"code":-32600,"message":"Invalid Request"}}`, n )
+                fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":%d,"error":{"code":-32600,"message":"Invalid Request"}}`, n )
             } else {
-                fmt.Fprintf( w, `{"jsonrpc":"2.0","id":%d,"result":"%s"}`, n, GetIP( r ) )
+                fmt.Fprintf( ctx, `{"jsonrpc":"2.0","id":%d,"result":"%s"}`, n, GetIP( ctx ) )
             }
             return
         }

@@ -2,12 +2,13 @@ package main
 
 import (
         "fmt"
-        "github.com/julienschmidt/httprouter"
+        "log"
+	"io/ioutil"
+
 	"github.com/mindc/go-ip-api/api"
 	"github.com/caarlos0/env"
-        "log"
-        "net/http"
-	"io/ioutil"
+	"github.com/buaazp/fasthttprouter"
+	"github.com/valyala/fasthttp"
 )
 
 var (
@@ -17,8 +18,8 @@ var (
 
 var htdoc string
 
-func Start( w http.ResponseWriter, r *http.Request, _ httprouter.Params ){
-	fmt.Fprint( w, htdoc )
+func Start( ctx * fasthttp.RequestCtx ){
+	fmt.Fprint( ctx, htdoc )
 }
 
 type Config struct {
@@ -55,7 +56,7 @@ func main() {
 	}
 
     //configure router
-        router := httprouter.New()
+        router := fasthttprouter.New()
 
         router.GET( "/", Start )
 
@@ -72,11 +73,11 @@ func main() {
     //main loops
 	if cfg.PortSSL != "" {
     	    go func() {
-		log.Fatal( http.ListenAndServeTLS( ":" + cfg.PortSSL, cfg.SSLCert, cfg.SSLKey, router ) )
+		log.Fatal( fasthttp.ListenAndServeTLS( ":" + cfg.PortSSL, cfg.SSLCert, cfg.SSLKey, router.Handler ) )
 	    }()
 	}
 
-        log.Fatal( http.ListenAndServe( ":" + cfg.Port, router ) )
+        log.Fatal( fasthttp.ListenAndServe( ":" + cfg.Port, router.Handler ) )
 
 
 }

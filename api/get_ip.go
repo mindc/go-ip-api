@@ -1,12 +1,10 @@
 package api
 
 import (
-	"net/http"
-	"net"
+	"github.com/valyala/fasthttp"
 )
 
-func GetIP ( r * http.Request ) ( string ) {
-        ipaddr, _, _ := net.SplitHostPort( r.RemoteAddr )
-        return ipaddr
+func GetIP ( ctx * fasthttp.RequestCtx ) ( string ) {
+	return ctx.RemoteIP().String()
 }
 

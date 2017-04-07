@@ -2,11 +2,11 @@ package api
 
 import (
 	"fmt"
-	"net/http"
-	"github.com/julienschmidt/httprouter"
+
+	"github.com/valyala/fasthttp"
 )
 
-func Plain( w http.ResponseWriter, r *http.Request, _ httprouter.Params ){
-        fmt.Fprint( w, GetIP( r ) )
+func Plain( ctx * fasthttp.RequestCtx ) {
+        fmt.Fprint( ctx, GetIP( ctx ) )
 }
 

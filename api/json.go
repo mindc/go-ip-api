@@ -2,11 +2,11 @@ package api
 
 import (
 	"fmt"
-	"net/http"
-	"github.com/julienschmidt/httprouter"
+
+	"github.com/valyala/fasthttp"
 )
 
-func Json( w http.ResponseWriter, r * http.Request, _ httprouter.Params ){
-        w.Header().Set( "Content-Type", "application/json; charset=utf-8" )
-        fmt.Fprintf( w, `{"ip":"%s"}`, GetIP( r ) )
+func Json( ctx * fasthttp.RequestCtx ){
+        ctx.SetContentType( "application/json; charset=utf-8" )
+        fmt.Fprintf( ctx, `{"ip":"%s"}`, GetIP( ctx ) )
 }
