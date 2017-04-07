@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"crypto/tls"
+	"net"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/caarlos0/env"
@@ -71,11 +73,27 @@ func main() {
 
 	//main loops
 	if cfg.PortSSL != "" {
-		go func() {
-			log.Fatal(fasthttp.ListenAndServeTLS(":"+cfg.PortSSL, cfg.SSLCert, cfg.SSLKey, router.Handler))
-		}()
+	    tlsConfig := &tls.Config{}
+	    tlsConfig.Certificates = make([]tls.Certificate, 1)
+	    tlsConfig.Certificates[0], err = tls.LoadX509KeyPair( cfg.SSLCert, cfg.SSLKey )
+	    if err != nil {
+    		log.Fatal(err)
+	    }
+
+	    tlsConfig.BuildNameToCertificate()
+	    listener, err := tls.Listen("tcp", ":" + cfg.PortSSL, tlsConfig)
+
+	    if err != nil {
+    		log.Fatal(err)
+	    }
+
+	    go func() {
+	        log.Fatal( fasthttp.Serve( listener, router.Handler ) )
+	    }()			
+
 	}
 
-	log.Fatal(fasthttp.ListenAndServe(":"+cfg.Port, router.Handler))
+	listener, err := net.Listen( "tcp", ":" + cfg.Port )
+	log.Fatal(fasthttp.Serve( listener, router.Handler))
 
 }
