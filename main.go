@@ -74,7 +74,7 @@ func main() {
 	router.POST("/jsonrpc", api.JSONRPC)
 
 	//main loops
-	if cfg.PortSSL != "" {
+	if len(cfg.portSSL) > 0 {
 		tlsConfig := &tls.Config{}
 		tlsConfig.Certificates = make([]tls.Certificate, 1)
 		tlsConfig.Certificates[0], err = tls.LoadX509KeyPair(cfg.sslCert, cfg.sslKey)
