@@ -30,11 +30,11 @@ func Start(ctx *fasthttp.RequestCtx) {
 
 // Config holds configuration strings
 type Config struct {
-	port    string `env:"PORT" envDefault:"8080"`
-	portSSL string `env:"PORT_SSL"`
-	htDoc   string `env:"HTDOC"`
-	sslCert string `env:"SSL_CERT"`
-	sslKey  string `env:"SSL_KEY"`
+	Port    string `env:"PORT" envDefault:"8080"`
+	PortSSL string `env:"PORT_SSL"`
+	HtDoc   string `env:"HTDOC"`
+	SSLCert string `env:"SSL_CERT"`
+	SSLKey  string `env:"SSL_KEY"`
 }
 
 func main() {
@@ -50,8 +50,8 @@ func main() {
 	fmt.Printf("%#v\n", cfg)
 
 	//read default htdoc
-	if len(cfg.htDoc) > 0 {
-		fh, err := ioutil.ReadFile(cfg.htDoc)
+	if len(cfg.HtDoc) > 0 {
+		fh, err := ioutil.ReadFile(cfg.HtDoc)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -76,16 +76,16 @@ func main() {
 	router.POST("/jsonrpc", api.JSONRPC)
 
 	//main loops
-	if len(cfg.portSSL) > 0 {
+	if len(cfg.PortSSL) > 0 {
 		tlsConfig := &tls.Config{}
 		tlsConfig.Certificates = make([]tls.Certificate, 1)
-		tlsConfig.Certificates[0], err = tls.LoadX509KeyPair(cfg.sslCert, cfg.sslKey)
+		tlsConfig.Certificates[0], err = tls.LoadX509KeyPair(cfg.SSLCert, cfg.SSLKey)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		tlsConfig.BuildNameToCertificate()
-		listener, err := tls.Listen("tcp", ":"+cfg.portSSL, tlsConfig)
+		listener, err := tls.Listen("tcp", ":"+cfg.PortSSL, tlsConfig)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -96,7 +96,7 @@ func main() {
 
 	}
 
-	listener, err := net.Listen("tcp", ":"+cfg.port)
+	listener, err := net.Listen("tcp", ":"+cfg.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
