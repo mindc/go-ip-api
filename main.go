@@ -14,19 +14,19 @@ import (
 )
 
 var (
-	Version string //version
-	BUILD   string //build
+	Version string // Version
+	BUILD   string // BUILD
 )
 
 var htdoc string
 
-// handling default start page
+// Start handling default start page
 func Start(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("text/html")
 	fmt.Fprint(ctx, htdoc)
 }
 
-// configuration struct
+// Config holds configuration strings
 type Config struct {
 	port    string `env:"PORT" envDefault:"8080"`
 	portSSL string `env:"PORT_SSL"`
