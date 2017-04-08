@@ -41,7 +41,7 @@ _* require valid [JSON-RPC 2.0](http://www.jsonrpc.org/specification) request wi
 
 ## Source code
 
-[https://github.com/mindc/go-ip-api](https://github.com/mindc/go-ip-api)
+[https://github.com/mindc/remoteip](https://github.com/mindc/remoteip)
 
 Using [https://github.com/valyala/fasthttp](https://github.com/valyala/fasthttp) as net/http replacement.  
 Using [https://github.com/buaazp/fasthttprouter](https://github.com/buaazp/fasthttprouter) as HTTP request router.  
