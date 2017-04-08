@@ -6,6 +6,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// create response with JSON formatted string
 func JSON(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json; charset=utf-8")
 	fmt.Fprintf(ctx, `{"ip":"%s"}`, GetIP(ctx))

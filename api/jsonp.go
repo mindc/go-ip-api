@@ -6,6 +6,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// create response in JSONP string
 func JSONP(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("text/javascript; charset=utf-8")
 

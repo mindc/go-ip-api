@@ -8,12 +8,14 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+// struct for JSON-RPC 2.0 request
 type JSONRPCRequest struct {
 	ID      json.RawMessage `json:"id,omitempty"`
 	Jsonrpc *string         `json:"jsonrpc,omitempty"`
 	Method  *string         `json:"method,omitempty"`
 }
 
+// create valid JSON-RPC 2.0 response
 func JSONRPC(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Content-Type", "application/json; charset=utf-8")
 	ctx.Response.Header.Set("Access-Control-Allow-Origin", string(ctx.Request.Header.Peek("Origin")))
