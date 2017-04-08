@@ -17,7 +17,7 @@ var (
 	// Version holds app version, filled at compile time
 	Version string
 	// BUILD holds app build version from git
-	BUILD   string
+	BUILD string
 )
 
 var htdoc string
