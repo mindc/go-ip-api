@@ -14,8 +14,10 @@ import (
 )
 
 var (
-	Version string // Version
-	BUILD   string // BUILD
+	// Version holds app version, filled at compile time
+	Version string
+	// BUILD holds app build version from git
+	BUILD   string
 )
 
 var htdoc string
