@@ -1,6 +1,7 @@
-# Simple IP-API
+# Simple Remote IP API
 
-Simple API to get your remote ip address.
+Simple API to get your remote ip address.  
+Standalone http-server written in [GO](https://golang.org/)
 
 ## Status
 
