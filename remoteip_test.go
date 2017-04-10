@@ -20,6 +20,7 @@ var apiTests = []struct {
 	//json
 	{`GET`, ``, `http://127.0.0.1:8080/json`, 200, `{"ip":"127.0.0.1"}`},
 	{`POST`, ``, `http://127.0.0.1:8080/json`, 200, `{"ip":"127.0.0.1"}`},
+
 	//josnp
 	{`POST`, ``, `http://127.0.0.1:8080/jsonp`, 405, `Method Not Allowed`},
 
@@ -67,6 +68,18 @@ var apiTests = []struct {
 	{`POST`, `{"jsonrpc":"2.0","id":null,"method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":null,"result":"127.0.0.1"}`},
 	// notification
 	{`POST`, `{"jsonrpc":"2.0","method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, ``},
+
+	{`POST`, `[{"jsonrpc":"2.0","id":"xDcF","method":"GET"}]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":"xDcF","result":"127.0.0.1"}]`},
+	{`POST`, `[{"jsonrpc":"2.0","id":"xDcF","method":"GET"},{"jsonrpc":"2.0","id":"s4bH","method":"GET"}]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":"xDcF","result":"127.0.0.1"},{"jsonrpc":"2.0","id":"s4bH","result":"127.0.0.1"}]`},
+	{`POST`, `[]`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}`},
+	{`POST`, `[1]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}]`},
+	{`POST`, `[1,2,3]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}},{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}},{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}]`},
+	{`POST`, `[{"jsonrpc":"2.0","method":"GET"},{"jsonrpc":"2.0","method":"GET"}]`, `http://127.0.0.1:8080/jsonrpc`, 200, ``},
+	{`POST`, `[{"jsonrpc":"2.0","id":"dRgg","method":"GET"},{"jsonrpc":"2.0","method":"GET"}]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":"dRgg","result":"127.0.0.1"}]`},
+	{`POST`, `[{"jsonrpc":"2.0","id":"dRgg","method":"GET"},{"jsonrpc":"2.5","id":"KJid","method":"GET"}]`, `http://127.0.0.1:8080/jsonrpc`, 200, `[{"jsonrpc":"2.0","id":"dRgg","result":"127.0.0.1"},{"jsonrpc":"2.0","id":"KJid","error":{"code":-32600,"message":"Invalid Request"}}]`},
+
+
+
 }
 
 func TestAPI(t *testing.T) {

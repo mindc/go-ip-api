@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/valyala/fasthttp"
 )
@@ -21,16 +22,9 @@ var JSONRPCErrorCodes = map[int]string{
 }
 
 // JSONRPCDecode decoding JSONRPC request from bytes
-func JSONRPCDecode(j []byte) *JSONRPCResponse {
+func JSONRPCDecode(v interface{}) *JSONRPCResponse {
 	var r JSONRPCResponse
 
-	var v interface{}
-	if err := json.Unmarshal(j, &v); err != nil {
-		id := `null`
-		r.ID = &id
-		r.Code = -32700
-		return &r
-	}
 
 	jsonrpcMissing := true
 	methodMissing := true
@@ -40,10 +34,10 @@ func JSONRPCDecode(j []byte) *JSONRPCResponse {
 		for key, value := range vv {
 			switch key {
 			case "id":
-				switch vvv := value.(type) {
+				switch vv := value.(type) {
 				case string:
-					if len(vvv) > 0 {
-						id := `"` + vvv + `"`
+					if len(vv) > 0 {
+						id := `"` + vv + `"`
 						r.ID = &id
 					} else {
 						id := `null`
@@ -51,7 +45,7 @@ func JSONRPCDecode(j []byte) *JSONRPCResponse {
 						r.Code = -32600
 					}
 				case float64:
-					id := strconv.FormatFloat(vvv, 'f', -1, 64)
+					id := strconv.FormatFloat(vv, 'f', -1, 64)
 					r.ID = &id
 				default:
 					id := `null`
@@ -60,9 +54,9 @@ func JSONRPCDecode(j []byte) *JSONRPCResponse {
 				}
 			case "jsonrpc":
 				jsonrpcMissing = false
-				switch vvv := value.(type) {
+				switch vv := value.(type) {
 				case string:
-					if vvv != "2.0" {
+					if vv != "2.0" {
 						r.Code = -32600
 					}
 				default:
@@ -71,9 +65,9 @@ func JSONRPCDecode(j []byte) *JSONRPCResponse {
 
 			case "method":
 				methodMissing = false
-				switch vvv := value.(type) {
+				switch vv := value.(type) {
 				case string:
-					if len(vvv) == 0 {
+					if len(vv) == 0 {
 						r.Code = -32600
 
 					}
@@ -87,6 +81,8 @@ func JSONRPCDecode(j []byte) *JSONRPCResponse {
 			}
 		}
 	default:
+		id := `null`
+		r.ID = &id
 		r.Code = -32600
 	}
 
@@ -103,14 +99,46 @@ func JSONRPC(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Access-Control-Allow-Origin", string(ctx.Request.Header.Peek("Origin")))
 	ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 
-	resp := JSONRPCDecode(ctx.PostBody())
+	var v interface{}
 
-	if resp.ID != nil {
-		if resp.Code == 0 {
-			fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":%s,"result":"%s"}`, *resp.ID, GetIP(ctx))
-		} else {
-			fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":%s,"error":{"code":%d,"message":"%s"}}`, *resp.ID, resp.Code, JSONRPCErrorCodes[resp.Code])
-		}
+	if err := json.Unmarshal(ctx.PostBody(), &v); err != nil {
+		fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}`)
+		return
 	}
 
+	switch vv := v.(type) {
+	case map[string]interface{}:
+		resp := JSONRPCDecode(vv)
+		if resp.ID != nil {
+			if resp.Code == 0 {
+				fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":%s,"result":"%s"}`, *resp.ID, GetIP(ctx))
+			} else {
+				fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":%s,"error":{"code":%d,"message":"%s"}}`, *resp.ID, resp.Code, JSONRPCErrorCodes[resp.Code])
+			}
+		}
+	case []interface{}:
+		if len(vv) == 0 {
+			fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}`)
+			return
+		}
+
+		var r []string
+		for _, value := range vv {
+			resp := JSONRPCDecode(value)
+			if resp.ID != nil {
+			if resp.Code == 0 {
+				r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"result":"%s"}`, *resp.ID, GetIP(ctx)))
+			} else {
+				r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"error":{"code":%d,"message":"%s"}}`, *resp.ID, resp.Code, JSONRPCErrorCodes[resp.Code]))
+			}
+			}
+		}
+
+		if len(r) > 0 {
+			ctx.WriteString("[" + strings.Join(r, ",") + "]")
+		}
+
+	default:
+		fmt.Fprintf(ctx, `{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}`)
+	}
 }
