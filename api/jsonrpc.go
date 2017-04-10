@@ -25,7 +25,6 @@ var JSONRPCErrorCodes = map[int]string{
 func JSONRPCDecode(v interface{}) *JSONRPCResponse {
 	var r JSONRPCResponse
 
-
 	jsonrpcMissing := true
 	methodMissing := true
 
@@ -126,11 +125,11 @@ func JSONRPC(ctx *fasthttp.RequestCtx) {
 		for _, value := range vv {
 			resp := JSONRPCDecode(value)
 			if resp.ID != nil {
-			if resp.Code == 0 {
-				r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"result":"%s"}`, *resp.ID, GetIP(ctx)))
-			} else {
-				r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"error":{"code":%d,"message":"%s"}}`, *resp.ID, resp.Code, JSONRPCErrorCodes[resp.Code]))
-			}
+				if resp.Code == 0 {
+					r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"result":"%s"}`, *resp.ID, GetIP(ctx)))
+				} else {
+					r = append(r, fmt.Sprintf(`{"jsonrpc":"2.0","id":%s,"error":{"code":%d,"message":"%s"}}`, *resp.ID, resp.Code, JSONRPCErrorCodes[resp.Code]))
+				}
 			}
 		}
 
