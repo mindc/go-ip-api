@@ -40,6 +40,9 @@ var apiTests = []struct {
 
 	// `id` as empty string
 	{`POST`, `{"jsonrpc":"2.0","id":"","method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}`},
+	// `id` is bool
+	{`POST`, `{"jsonrpc":"2.0","id":true,"method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Invalid Request"}}`},
+
 
 	// `method` missing
 	{`POST`, `{"jsonrpc":"2.0","id":"xDcF"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":"xDcF","error":{"code":-32600,"message":"Invalid Request"}}`},
@@ -66,6 +69,7 @@ var apiTests = []struct {
 	{`POST`, `{"jsonrpc":"2.0","id":453.4,"method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":453.4,"result":"127.0.0.1"}`},
 	// `id` is null
 	{`POST`, `{"jsonrpc":"2.0","id":null,"method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, `{"jsonrpc":"2.0","id":null,"result":"127.0.0.1"}`},
+
 	// notification
 	{`POST`, `{"jsonrpc":"2.0","method":"GET"}`, `http://127.0.0.1:8080/jsonrpc`, 200, ``},
 

@@ -46,9 +46,13 @@ func JSONRPCDecode(v interface{}) *JSONRPCResponse {
 				case float64:
 					id := strconv.FormatFloat(vv, 'f', -1, 64)
 					r.ID = &id
+				case nil:
+					id := `null`
+					r.ID = &id
 				default:
 					id := `null`
 					r.ID = &id
+					r.Code = -32600
 
 				}
 			case "jsonrpc":
