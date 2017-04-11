@@ -87,11 +87,13 @@ func TestAPI(t *testing.T) {
 	hc := http.Client{}
 	for _, tt := range apiTests {
 		t.Log(tt.method, tt.postData, tt.url)
-		if req, err := http.NewRequest(tt.method, tt.url, strings.NewReader(tt.postData)); err != nil {
+		req, err := http.NewRequest(tt.method, tt.url, strings.NewReader(tt.postData))
+		if err != nil {
 			t.Error(err)
 		}
 
-		if resp, err := hc.Do(req); err != nil {
+		resp, err := hc.Do(req) 
+		if err != nil {
 			t.Error(err)
 		}
 
@@ -99,7 +101,8 @@ func TestAPI(t *testing.T) {
 			t.Error("expected status:", tt.status, "got:", resp.StatusCode)
 		}
 
-		if body, err := ioutil.ReadAll(resp.Body); err != nil {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
 			t.Error(err)
 		}
 
