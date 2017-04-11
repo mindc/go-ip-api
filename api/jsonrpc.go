@@ -21,7 +21,7 @@ var JSONRPCErrorCodes = map[int]string{
 	-32700: `Parse error`,
 }
 
-// JSONRPCDecode decoding JSONRPC request from bytes
+// JSONRPCDecode decoding JSONRPC request from interface
 func JSONRPCDecode(v interface{}) *JSONRPCResponse {
 	var r JSONRPCResponse
 
