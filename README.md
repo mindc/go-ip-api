@@ -5,7 +5,7 @@ Standalone http-server written in [GO](https://golang.org/)
 
 ## Status
 
-Running...
+[https://ip.mindc.net](https://ip.mindc.net) running...
 
 ## API
 

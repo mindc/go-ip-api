@@ -13,6 +13,14 @@ install:
 	@go install ${LDFLAGS}
 	@test -x ./md2html.pl && ./md2html.pl
 
+publish: install markdown supervisor
+
+markdown:
+	@test -x ./md2html.pl && ./md2html.pl
+
+supervisor:
+	@/etc/init.d/supervisor restart
+
 clean:
 	@test -f ${BINARY} && rm -v ${BINARY}
 
