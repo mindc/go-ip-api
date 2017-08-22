@@ -29,3 +29,6 @@ _*.go
 README.html
 md2html.pl
 remoteip
+
+node_modules/
+package-lock.json
