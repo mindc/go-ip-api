@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"strings"
 
 	"github.com/buaazp/fasthttprouter"
 	"github.com/caarlos0/env"
@@ -25,7 +26,7 @@ var htdoc string
 // Start handling default start page
 func Start(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("text/html")
-	fmt.Fprint(ctx, htdoc)
+	fmt.Fprint(ctx, strings.Replace(htdoc, "8.8.8.8", api.GetIP(ctx), -1))
 }
 
 // Config holds configuration strings

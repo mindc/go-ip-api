@@ -1,11 +1,13 @@
-# Simple Remote IP API
+# Simple RemoteIP REST API
 
-Simple API to get your remote ip address.  
+Simple REST API to get your remote ip address.  
 Standalone http-server written in [GO](https://golang.org/)
 
 ## Status
 
-[https://ip.mindc.net](https://ip.mindc.net) running...
+[https://ip.mindc.net](https://ip.mindc.net) running...  
+[https://ip4.mindc.net](https://ip4.mindc.net) running...  
+[https://ip6.mindc.net](https://ip6.mindc.net) running...  
 
 ## API
 
@@ -49,4 +51,4 @@ Using [https://github.com/buaazp/fasthttprouter](https://github.com/buaazp/fasth
 Using [https://github.com/caarlos0/env](https://github.com/caarlos0/env) as ENV parser.  
 Using [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css) for Markdown CSS  
 
-2017
+2017-2019
